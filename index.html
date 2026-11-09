@@ -1,65 +1,76 @@
-// CONTROLADOR DEL SISTEMA DE VENTANAS
-function cambiarVentana(idVentana) {
-    document.querySelectorAll('.app-window').forEach(win => {
-        win.classList.remove('active');
-    });
-    document.getElementById(idVentana).classList.add('active');
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatrixCrypt - App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- BARRA SUPERIOR DE LA APP -->
+        <header class="app-header">
+            <h1>🔐 MatrixCrypt</h1>
+            <p>Ingeniería de Sistemas e Informática</p>
+        </header>
 
-// BACKEND MATEMÁTICO: CIFRADO DE HILL (MÓDULO 26)
-const alfabeto = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"; // Longitud: 27
+        <!-- VENTANA 1: INICIO -->
+        <section id="ventana-inicio" class="app-window active">
+            <h2>Proyecto Matemática Superior</h2>
+            <div class="card">
+                <p><strong>Tema:</strong> Cifrado de Hill mediante Álgebra Lineal.</p>
+                <p>Esta aplicación encripta datos simulando la seguridad informática real usando multiplicación matricial y aritmética modular.</p>
+            </div>
+            <button class="btn-primary" onclick="cambiarVentana('ventana-cifrador')">Comenzar a Cifrar</button>
+        </section>
 
-function procesarCifrado() {
-    // 1. Obtener la Matriz Clave del DOM
-    let a = parseInt(document.getElementById('m11').value);
-    let b = parseInt(document.getElementById('m12').value);
-    let c = parseInt(document.getElementById('m21').value);
-    let d = parseInt(document.getElementById('m22').value);
+        <!-- VENTANA 2: CIFRADOR -->
+        <section id="ventana-cifrador" class="app-window">
+            <h2>Configuración del Cifrado</h2>
+            
+            <div class="card">
+                <h3>1. Ingrese la Matriz Clave (2x2)</h3>
+                <div class="matrix-grid">
+                    <input type="number" id="m11" value="3">
+                    <input type="number" id="m12" value="5">
+                    <input type="number" id="m21" value="2">
+                    <input type="number" id="m22" value="7">
+                </div>
+            </div>
 
-    // 2. Calcular Determinante para el profesor
-    let determinante = (a * d) - (b * c);
-    document.getElementById('detCalculo').innerHTML = `
-        <strong>Det(K)</strong> = (${a} × ${d}) - (${b} × ${c}) = <strong>${determinante}</strong>
-    `;
+            <div class="card">
+                <h3>2. Mensaje a Cifrar</h3>
+                <input type="text" id="mensajeInput" placeholder="EJ: HOLA" value="HOLA">
+                <button class="btn-success" onclick="procesarCifrado()">Ejecutar Operación Matricial</button>
+            </div>
 
-    // 3. Procesar Texto
-    let texto = document.getElementById('mensajeInput').value.toUpperCase().replace(/\s+/g, '');
-    
-    // Ajustar texto si es impar (rellenar con 'X')
-    if (texto.length % 2 !== 0) texto += 'X';
+            <div class="card outcome-card">
+                <h3>Resultado Oculto:</h3>
+                <div id="resultadoTexto" class="resultado-box">Esperando datos...</div>
+            </div>
 
-    let resultadoCifrado = "";
-    let pasosHtml = "<h4>Multiplicaciones de Vectores:</h4>";
+            <div class="navigation-buttons">
+                <button class="btn-secondary" onclick="cambiarVentana('ventana-inicio')">Atrás</button>
+                <button class="btn-primary" onclick="cambiarVentana('ventana-pasos')">Ver Operaciones Matemática</button>
+            </div>
+        </section>
 
-    // 4. Recorrer el mensaje en bloques de 2 elementos (Vectores 2x1)
-    for (let i = 0; i < texto.length; i += 2) {
-        let v1 = alfabeto.indexOf(texto[i]);
-        let v2 = alfabeto.indexOf(texto[i+1]);
+        <!-- VENTANA 3: PASO A PASO MATEMÁTICO -->
+        <section id="ventana-pasos" class="app-window">
+            <h2>Backend Matemático (Demostración)</h2>
+            <div class="card">
+                <h3>Análisis del Determinante:</h3>
+                <div id="detCalculo">El determinante aparecerá al cifrar.</div>
+            </div>
+            <div class="card">
+                <h3>Ecuación General Aplicada:</h3>
+                <p class="math-box">C = (M × V) mod 27</p>
+                <div id="pasosMultiplicacion">Aquí se detallará el cálculo paso a paso.</div>
+            </div>
+            <button class="btn-secondary" onclick="cambiarVentana('ventana-cifrador')">Volver al Cifrador</button>
+        </section>
+    </div>
 
-        if(v1 === -1) v1 = 0;
-        if(v2 === -1) v2 = 0;
-
-        // Multiplicación de Matrices (Fila x Columna) mod 27
-        let c1 = (a * v1 + b * v2) % 27;
-        let c2 = (c * v1 + d * v2) % 27;
-        
-        // Corregir residuos negativos
-        if (c1 < 0) c1 += 27;
-        if (c2 < 0) c2 += 27;
-
-        resultadoCifrado += alfabeto[c1] + alfabeto[c2];
-
-        // Construir demostración paso a paso
-        pasosHtml += `
-            <p style="margin-top:8px;">• Bloque [${texto[i]}, ${texto[i+1]}] ➔ Vector [${v1}, ${v2}]:</p>
-            <code style="display:block; padding-left:10px; color:#555;">
-                C1 = (${a}×${v1} + ${b}×${v2}) mod 27 = ${c1} (Letra: ${alfabeto[c1]})<br>
-                C2 = (${c}×${v1} + ${d}×${v2}) mod 27 = ${c2} (Letra: ${alfabeto[c2]})
-            </code>
-        `;
-    }
-
-    // 5. Renderizar resultados en pantalla
-    document.getElementById('resultadoTexto').innerText = resultadoCifrado;
-    document.getElementById('pasosMultiplicacion').innerHTML = pasosHtml;
-}
+    <script src="script.js"></script>
+</body>
+</html>

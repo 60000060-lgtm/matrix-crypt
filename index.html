@@ -1,0 +1,65 @@
+// CONTROLADOR DEL SISTEMA DE VENTANAS
+function cambiarVentana(idVentana) {
+    document.querySelectorAll('.app-window').forEach(win => {
+        win.classList.remove('active');
+    });
+    document.getElementById(idVentana).classList.add('active');
+}
+
+// BACKEND MATEMÁTICO: CIFRADO DE HILL (MÓDULO 26)
+const alfabeto = "ABCDEFGHIJKLMNÑOPQRSTUVWXYZ"; // Longitud: 27
+
+function procesarCifrado() {
+    // 1. Obtener la Matriz Clave del DOM
+    let a = parseInt(document.getElementById('m11').value);
+    let b = parseInt(document.getElementById('m12').value);
+    let c = parseInt(document.getElementById('m21').value);
+    let d = parseInt(document.getElementById('m22').value);
+
+    // 2. Calcular Determinante para el profesor
+    let determinante = (a * d) - (b * c);
+    document.getElementById('detCalculo').innerHTML = `
+        <strong>Det(K)</strong> = (${a} × ${d}) - (${b} × ${c}) = <strong>${determinante}</strong>
+    `;
+
+    // 3. Procesar Texto
+    let texto = document.getElementById('mensajeInput').value.toUpperCase().replace(/\s+/g, '');
+    
+    // Ajustar texto si es impar (rellenar con 'X')
+    if (texto.length % 2 !== 0) texto += 'X';
+
+    let resultadoCifrado = "";
+    let pasosHtml = "<h4>Multiplicaciones de Vectores:</h4>";
+
+    // 4. Recorrer el mensaje en bloques de 2 elementos (Vectores 2x1)
+    for (let i = 0; i < texto.length; i += 2) {
+        let v1 = alfabeto.indexOf(texto[i]);
+        let v2 = alfabeto.indexOf(texto[i+1]);
+
+        if(v1 === -1) v1 = 0;
+        if(v2 === -1) v2 = 0;
+
+        // Multiplicación de Matrices (Fila x Columna) mod 27
+        let c1 = (a * v1 + b * v2) % 27;
+        let c2 = (c * v1 + d * v2) % 27;
+        
+        // Corregir residuos negativos
+        if (c1 < 0) c1 += 27;
+        if (c2 < 0) c2 += 27;
+
+        resultadoCifrado += alfabeto[c1] + alfabeto[c2];
+
+        // Construir demostración paso a paso
+        pasosHtml += `
+            <p style="margin-top:8px;">• Bloque [${texto[i]}, ${texto[i+1]}] ➔ Vector [${v1}, ${v2}]:</p>
+            <code style="display:block; padding-left:10px; color:#555;">
+                C1 = (${a}×${v1} + ${b}×${v2}) mod 27 = ${c1} (Letra: ${alfabeto[c1]})<br>
+                C2 = (${c}×${v1} + ${d}×${v2}) mod 27 = ${c2} (Letra: ${alfabeto[c2]})
+            </code>
+        `;
+    }
+
+    // 5. Renderizar resultados en pantalla
+    document.getElementById('resultadoTexto').innerText = resultadoCifrado;
+    document.getElementById('pasosMultiplicacion').innerHTML = pasosHtml;
+}

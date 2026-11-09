@@ -3,71 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatrixCrypt - App</title>
+    <title>MatrixCrypt Premium</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- BARRA SUPERIOR DE LA APP -->
+        <!-- BARRA DE ESTADO SIMULADA DE CELULAR -->
+        <div class="status-bar">
+            <span class="time">20:25</span>
+            <div class="icons">📶 🔋 100%</div>
+        </div>
+
+        <!-- BARRA SUPERIOR DE LA APLICACIÓN -->
         <header class="app-header">
-            <h1>🔐 MatrixCrypt</h1>
-            <p>Ingeniería de Sistemas e Informática</p>
-        </header>
-
-        <!-- VENTANA 1: INICIO -->
-        <section id="ventana-inicio" class="app-window active">
-            <h2>Proyecto Matemática Superior</h2>
-            <div class="card">
-                <p><strong>Tema:</strong> Cifrado de Hill mediante Álgebra Lineal.</p>
-                <p>Esta aplicación encripta datos simulando la seguridad informática real usando multiplicación matricial y aritmética modular.</p>
-            </div>
-            <button class="btn-primary" onclick="cambiarVentana('ventana-cifrador')">Comenzar a Cifrar</button>
-        </section>
-
-        <!-- VENTANA 2: CIFRADOR -->
-        <section id="ventana-cifrador" class="app-window">
-            <h2>Configuración del Cifrado</h2>
-            
-            <div class="card">
-                <h3>1. Ingrese la Matriz Clave (2x2)</h3>
-                <div class="matrix-grid">
-                    <input type="number" id="m11" value="3">
-                    <input type="number" id="m12" value="5">
-                    <input type="number" id="m21" value="2">
-                    <input type="number" id="m22" value="7">
+            <div class="logo-area">
+                <span class="logo-icon">🔐</span>
+                <div>
+                    <h1>MatrixCrypt Pro</h1>
+                    <p>Sistemas & Informática • Matemática Superior</p>
                 </div>
             </div>
+        </header>
 
-            <div class="card">
-                <h3>2. Mensaje a Cifrar</h3>
-                <input type="text" id="mensajeInput" placeholder="EJ: HOLA" value="HOLA">
-                <button class="btn-success" onclick="procesarCifrado()">Ejecutar Operación Matricial</button>
+        <!-- VENTANA 1: INICIO (BIENVENIDA LLAMATIVA) -->
+        <section id="ventana-inicio" class="app-window active">
+            <div class="welcome-hero">
+                <div class="pulse-glow">🌌</div>
+                <h2>Criptografía de Vanguardia</h2>
+                <p>Protege tus datos en la red utilizando estructuras de álgebra lineal avanzada y aritmética modular aplicada.</p>
+            </div>
+            
+            <div class="card spec-card">
+                <h3>⚡ Especificaciones Técnicas:</h3>
+                <ul>
+                    <li><strong>Algoritmo de Hill</strong> (Matriz Clave de 2×2)</li>
+                    <li>Soporte Alfabeto Completo (Módulo 27)</li>
+                    <li>Desglose Matemático del Backend en Vivo</li>
+                </ul>
+            </div>
+            
+            <button class="btn btn-primary animate-btn" onclick="cambiarVentana('ventana-cifrador')">
+                Iniciar Aplicación 🚀
+            </button>
+        </section>
+
+        <!-- VENTANA 2: CIFRADOR INTERACTIVO -->
+        <section id="ventana-cifrador" class="app-window">
+            <h2 class="section-title">Consola de Cifrado</h2>
+            
+            <div class="card matrix-card">
+                <h3>🛠️ 1. Matriz Clave de Encriptación (K)</h3>
+                <p class="card-desc">Los números determinan la transformación lineal del espacio de texto.</p>
+                <div class="matrix-grid">
+                    <input type="number" id="m11" value="3" oninput="validarMatrizEnVivo()">
+                    <input type="number" id="m12" value="5" oninput="validarMatrizEnVivo()">
+                    <input type="number" id="m21" value="2" oninput="validarMatrizEnVivo()">
+                    <input type="number" id="m22" value="7" oninput="validarMatrizEnVivo()">
+                </div>
+                <div id="matrizStatus" class="matrix-badge status-valid">✅ Matriz Estable e Invertible</div>
+            </div>
+
+            <div class="card input-card">
+                <h3>💬 2. Mensaje Confidencial</h3>
+                <input type="text" id="mensajeInput" placeholder="EJ: INGENIERIA DE SISTEMAS" value="HOLA" oninput="this.value = this.value.toUpperCase()">
+                <button id="btnEjecutar" class="btn btn-success" onclick="procesarCifrado()">
+                    Cifrar Datos con Matriz 🔒
+                </button>
             </div>
 
             <div class="card outcome-card">
-                <h3>Resultado Oculto:</h3>
-                <div id="resultadoTexto" class="resultado-box">Esperando datos...</div>
+                <h3>📡 Salida del Criptograma:</h3>
+                <div id="resultadoTexto" class="resultado-box">ESPERANDO DATOS...</div>
             </div>
 
-            <div class="navigation-buttons">
-                <button class="btn-secondary" onclick="cambiarVentana('ventana-inicio')">Atrás</button>
-                <button class="btn-primary" onclick="cambiarVentana('ventana-pasos')">Ver Operaciones Matemática</button>
+            <div class="navigation-footer">
+                <button class="btn btn-secondary" onclick="cambiarVentana('ventana-inicio')">⏮️ Salir</button>
+                <button id="btnVerPasos" class="btn btn-info" onclick="cambiarVentana('ventana-pasos')" disabled>📊 Ver Backend Matemático</button>
             </div>
         </section>
 
-        <!-- VENTANA 3: PASO A PASO MATEMÁTICO -->
+        <!-- VENTANA 3: BACKEND MATEMÁTICO (PASO A PASO) -->
         <section id="ventana-pasos" class="app-window">
-            <h2>Backend Matemático (Demostración)</h2>
-            <div class="card">
-                <h3>Análisis del Determinante:</h3>
-                <div id="detCalculo">El determinante aparecerá al cifrar.</div>
+            <h2 class="section-title">Análisis y Auditoría de Datos</h2>
+            
+            <div class="card math-summary-card">
+                <h3>Análisis del Determinante Modular:</h3>
+                <div id="detCalculo" class="math-display">Ejecuta el cifrado primero.</div>
             </div>
-            <div class="card">
-                <h3>Ecuación General Aplicada:</h3>
-                <p class="math-box">C = (M × V) mod 27</p>
-                <div id="pasosMultiplicacion">Aquí se detallará el cálculo paso a paso.</div>
+            
+            <div class="card computational-card">
+                <h3>Transformación de Espacio Vectorial:</h3>
+                <div class="formula-banner">C = (K × V) mod 27</div>
+                <div id="pasosMultiplicacion" class="terminal-logs">
+                    <p class="ghost-text">// Esperando procesamiento de vectores de datos...</p>
+                </div>
             </div>
-            <button class="btn-secondary" onclick="cambiarVentana('ventana-cifrador')">Volver al Cifrador</button>
+            
+            <button class="btn btn-secondary" onclick="cambiarVentana('ventana-cifrador')">
+                ↩️ Volver al Panel de Control
+            </button>
         </section>
     </div>
 
